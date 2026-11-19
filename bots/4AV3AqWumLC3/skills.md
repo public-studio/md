@@ -1,0 +1,1 @@
+# スキル目次 | 本体=https://raw.githubusercontent.com/public-studio/md/main/bots/4AV3AqWumLC3/main.md | 目次=https://raw.githubusercontent.com/public-studio/md/main/bots/4AV3AqWumLC3/skills.md | 共通=https://raw.githubusercontent.com/public-studio/md/main/skills/index.md
