@@ -1,0 +1,1 @@
+# BotFactory更新確認 | 自己URL=https://raw.githubusercontent.com/public-studio/md/main/bots/4AV3AqWumLC3/main.md | ナレッジ=https://studio.kanazawa-u.work/docs/knowledge-sources.md | 登録=https://studio.kanazawa-u.work/knowledge/new | DB=https://studio.kanazawa-u.work/docs/public-db.md
