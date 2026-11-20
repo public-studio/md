@@ -16,9 +16,9 @@
 必要なナレッジソースがあれば固定URLを記載します。なければ「なし」とします。
 
 ## 既存の資料・公開データとの連携
-- 資料を参照するナレッジソース: https://studio.kanazawa-u.work/docs/knowledge-sources.md
+- 資料を参照するナレッジソース: https://raw.githubusercontent.com/public-studio/md/main/docs/knowledge-sources.md
 - ナレッジソースの登録画面: https://studio.kanazawa-u.work/knowledge/new
-- 構造化データを保存する公開DB: https://studio.kanazawa-u.work/docs/public-db.md
+- 構造化データを保存する公開DB: https://raw.githubusercontent.com/public-studio/md/main/docs/public-db.md
 ナレッジソースは資料の参照用、公開DBはアプリのデータ保存用です。ボット本体やスキルMarkdownの保存先と混同しないでください。
 
 ## 自己改善・共同改善
