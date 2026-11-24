@@ -8,7 +8,7 @@
 2. 資料をMarkdownにして入力します。短い資料はAI Studio登録画面へのリンクから下書きを受け取れます。長い資料はChatGPTからMarkdown本文をコピーし、登録画面へ貼り付けます。
 3. 「公開して登録」を押すと、Markdown本文を返す参照URLを発行します。
 4. Notepad Studioの選択画面で1件以上選び、「プロンプトに追加」を押します。プロンプトには本文ではなく公開参照URLと短い案内を追加します。
-5. AIが参照する公開目次は [GitHub Rawのナレッジ目次](https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md) です。目次は保存済みのMarkdownから自動生成されます。人間向けの従来URL `https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md` も互換用に維持されます。
+5. AIが参照する公開目次は [GitHub Rawのナレッジ目次](https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md) です。目次は保存済みのMarkdownから自動生成されます。人間向けの従来URL `https://studio.kanazawa-u.work/knowledge/index.md` も互換用に維持されます。
 
 公開参照URLは、URLを知る人がログインなしで取得できます。機密情報や公開できない資料は登録しないでください。登録した資料のタイトルを変更してもID・参照URL・本文は変わりません。
 
@@ -46,11 +46,11 @@ const markdownResponse = await fetch(source.aiReferenceUrl);
 const markdown = await markdownResponse.text();
 ~~~
 
-参照URL /knowledge/{id}.md は text/markdown; charset=utf-8 で本文だけを返します。
+Studio互換エンドポイント `/knowledge/{id}.md` は `text/markdown; charset=utf-8` で本文だけを返します。これは人間向け・既存クライアント向けの互換URLです。外部AIへ渡す場合は、このパターンからURLを組み立てず、ナレッジ目次またはAPI応答にある具体的な `aiReferenceUrl` を使います。
 
 ### AIが参照する公開目次
 
-GitHub Rawの `knowledge/index.md`（互換URL `GET https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md`）は保存済みソースのタイトルと安定参照URLを一覧にします。AIが資料をたどる場合はRaw URLを使います。Markdown本文に次の見出しがある場合は、用途・説明・キーワードも索引に表示します。
+GitHub Rawの `knowledge/index.md`（互換URL `GET /knowledge/index.md`）は保存済みソースのタイトルと安定参照URLを一覧にします。AIが資料をたどる場合はRaw URLを使います。Markdown本文に次の見出しがある場合は、用途・説明・キーワードも索引に表示します。
 
 ~~~md
 ## 用途
@@ -63,7 +63,7 @@ GitHub Rawの `knowledge/index.md`（互換URL `GET https://raw.githubuserconten
 検索や選択に役立つ語句
 ~~~
 
-見出しのない既存ソースは、用途などを推測せず、既知のタイトルとRaw参照URLだけを掲載します。索引に編集トークンは含まれません。ChatGPTなどは索引から資料を選び、必要な資料だけ `https://raw.githubusercontent.com/public-studio/md/main/knowledge/{id}.md` を取得する想定です。外部AIがURLを取得できるとは限らないため、取得できない場合は本文を貼り付けてください。
+見出しのない既存ソースは、用途などを推測せず、既知のタイトルと具体的なRaw参照URLだけを掲載します。索引に編集トークンは含まれません。ChatGPTなどは索引から資料を選び、そこに記載されたURLをそのまま取得します。説明用のID表記からURLを組み立てたり、未確認のURLを推測したりしません。外部AIがURLを取得できるとは限らないため、取得できない場合は本文を貼り付けてください。
 
 ChatGPTに資料のMarkdown化を頼むときは、用途が未確認なら短い選択肢を提案させ、利用者が選んだ用途を実際の `## 用途` 本文に含めます。必要に応じて `## 説明` と `## キーワード` も作ります。既存の `/knowledge/new` 登録フォームにリンクで下書きを渡せるのは、タイトルと本文を含むURL全体が8,000文字以下の場合です。それを超えるときはコピー貼り付けを使います。フォームを開いただけでは保存されません。
 
@@ -84,7 +84,7 @@ const updated = await fetch("https://studio.kanazawa-u.work/api/knowledge-source
 });
 ~~~
 
-同一ブラウザーの「自分が管理するソース」一覧はローカルに保存されます。別のブラウザーへ編集トークンや編集一覧は自動共有されません。公開一覧 `https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md` は参照用であり、編集トークンを返しません。
+同一ブラウザーの「自分が管理するソース」一覧はローカルに保存されます。別のブラウザーへ編集トークンや編集一覧は自動共有されません。公開一覧 `/knowledge/index.md` は参照用であり、編集トークンを返しません。
 
 ## AIでの参照について
 
