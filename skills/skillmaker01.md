@@ -35,9 +35,9 @@ The user asks to create, improve, or register a reusable skill.
 
 When the user asks to improve an already registered skill while keeping its identity, follow this update flow instead of creating a new skill:
 
-If the user has provided only a display name, or that name could refer to more than one skill, first read the live shared index at `/skills/index.md`. Show matching candidates with their title, description, ID, and stable Markdown URL. Ask the user to choose when the match is ambiguous; do not infer an ID from a name or start an update handoff before the target is clear. After the user chooses, verify the selected ID against `GET /api/skills/{id}`.
+If the user has provided only a display name, or that name could refer to more than one skill, first read the live shared index at `https://raw.githubusercontent.com/public-studio/md/main/skills/index.md`. Show matching candidates with their title, description, ID, and stable Markdown URL. Ask the user to choose when the match is ambiguous; do not infer an ID from a name or start an update handoff before the target is clear. After the user chooses, verify the selected ID against `GET /api/skills/{id}`.
 
-1. Read the skill's actual stable Markdown URL and request `GET /api/skills/{id}`. Use the real returned ID, title, description, Markdown, and revision; do not infer them from a display name or an old draft. If the skill is a built-in immutable skill, do not attempt to update it—offer to copy it into a new skill ID.
+1. Read the skill's actual stable Markdown URL (for AI retrieval, use the URL shown in the Raw shared index) and request `GET /api/skills/{id}`. Use the real returned ID, title, description, Markdown, and revision; do not infer them from a display name or an old draft. If the skill is a built-in immutable skill, do not attempt to update it—offer to copy it into a new skill ID.
 2. Show the proposed changes and preserve the existing skill's language and content. The English-by-default rule above applies to newly created skill bodies; do not wholesale translate an existing skill unless the user explicitly asks for translation.
 3. Create a fresh unique 32-character lowercase hexadecimal `handoffId` and a 6–8 digit `receiptCode` serialized as a JSON string. Build the update payload with the reviewed draft:
 
@@ -91,7 +91,7 @@ Return exactly three summary lines.
 ~~~
 
 ## 実装上の受け渡し
-有効なAI生成スキル登録リンクを開くと、利用者のブラウザーがAI StudioのAPIへ1回だけ登録を送信し、保存成功を実際の応答で確認します。通常の `/skills/new` は従来の手動登録フォームです。ChatGPTからAPIへ直接書き込むことはありません。リンクが長すぎる、壊れている、または開けない場合は、Markdownをコピーして手動フォームへ貼り付けてください。
+有効なAI生成スキル登録リンクを開くと、利用者のブラウザーがAI StudioのAPIへ1回だけ登録を送信し、保存成功を実際の応答で確認します。通常の `https://studio.kanazawa-u.work/skills/new` は従来の手動登録フォームです。ChatGPTからAPIへ直接書き込むことはありません。リンクが長すぎる、壊れている、または開けない場合は、Markdownをコピーして手動フォームへ貼り付けてください。
 
 ## 既存スキルの更新
-更新時は対象の固定Markdown URLと `GET /api/skills/{id}` の実データを取得し、実際の `revision` と本文に基づいて `/skills/{id}/edit#factory=...` のリンクを作ります。リンクを開いたブラウザーが最新revisionを再取得し、`If-Match` を付けた `PUT /api/skills/{id}` を一度だけ行います。revisionが取れないときは、読んだ元データと現在の保存内容が完全一致する場合だけ更新します。競合・不一致なら上書きせず、手動編集へ切り替えます。更新後もIDと固定Markdown URLは維持されます。ChatGPTがAPIへ直接書き込むことはありません。
+更新時は対象の固定Markdown URLと `https://studio.kanazawa-u.work/api/skills/{id}` の実データを取得し、実際の `revision` と本文に基づいて `https://studio.kanazawa-u.work/skills/{id}/edit#factory=...` のリンクを作ります。リンクを開いたブラウザーが最新revisionを再取得し、`If-Match` を付けた更新要求を一度だけ行います。revisionが取れないときは、読んだ元データと現在の保存内容が完全一致する場合だけ更新します。競合・不一致なら上書きせず、手動編集へ切り替えます。更新後もIDと固定Markdown URLは維持されます。ChatGPTがAPIへ直接書き込むことはありません。
