@@ -248,7 +248,7 @@ capped at 100. The opaque cursor pages by `updatedAt DESC, id ASC`.
 
 ### AI Studio guide and ChatGPT handoff
 
-- `GET https://raw.githubusercontent.com/public-studio/md/main/ai/guide.md` returns one AI-facing Markdown guide assembled at runtime
+- `GET /ai/guide.md` returns one AI-facing Markdown guide assembled at runtime
   from the master prompt and the Notepad Studio, prompt API, public DB, and
   Knowledge Sources references. Runtime URLs and known API placeholders are
   resolved from the configured public origin. It responds as
@@ -259,7 +259,7 @@ capped at 100. The opaque cursor pages by `updatedAt DESC, id ASC`.
 - The completed URL, including `https://chatgpt.com/?q=`, is measured after
   URL encoding. The implementation caps it at 65,553 JavaScript characters.
   If the full launch section would exceed the cap, `/new` uses a compact
-  instruction that points to `https://raw.githubusercontent.com/public-studio/md/main/ai/guide.md` instead of embedding the full guide.
+  instruction that points to `/ai/guide.md` instead of embedding the full guide.
 - Notepad Studio imports generated Markdown through the existing
   `/notepad?prompt=<URL-encoded Markdown>` or
   `/notepad#prompt=<UTF-8 Base64URL>` format. URL import is local editing with
@@ -459,11 +459,11 @@ const markdownResponse = await fetch(source.aiReferenceUrl);
 const markdown = await markdownResponse.text();
 ~~~
 
-参照URL /knowledge/{id}.md は text/markdown; charset=utf-8 で本文だけを返します。
+Studio互換エンドポイント `/knowledge/{id}.md` は `text/markdown; charset=utf-8` で本文だけを返します。これは人間向け・既存クライアント向けの互換URLです。外部AIへ渡す場合は、このパターンからURLを組み立てず、ナレッジ目次またはAPI応答にある具体的な `aiReferenceUrl` を使います。
 
 #### AIが参照する公開目次
 
-GitHub Rawの `knowledge/index.md`（互換URL `GET https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md`）は保存済みソースのタイトルと安定参照URLを一覧にします。AIが資料をたどる場合はRaw URLを使います。Markdown本文に次の見出しがある場合は、用途・説明・キーワードも索引に表示します。
+GitHub Rawの `knowledge/index.md`（互換URL `GET /knowledge/index.md`）は保存済みソースのタイトルと安定参照URLを一覧にします。AIが資料をたどる場合はRaw URLを使います。Markdown本文に次の見出しがある場合は、用途・説明・キーワードも索引に表示します。
 
 ~~~md
 ## 用途
@@ -476,7 +476,7 @@ GitHub Rawの `knowledge/index.md`（互換URL `GET https://raw.githubuserconten
 検索や選択に役立つ語句
 ~~~
 
-見出しのない既存ソースは、用途などを推測せず、既知のタイトルとRaw参照URLだけを掲載します。索引に編集トークンは含まれません。ChatGPTなどは索引から資料を選び、必要な資料だけ `https://raw.githubusercontent.com/public-studio/md/main/knowledge/{id}.md` を取得する想定です。外部AIがURLを取得できるとは限らないため、取得できない場合は本文を貼り付けてください。
+見出しのない既存ソースは、用途などを推測せず、既知のタイトルと具体的なRaw参照URLだけを掲載します。索引に編集トークンは含まれません。ChatGPTなどは索引から資料を選び、そこに記載されたURLをそのまま取得します。説明用のID表記からURLを組み立てたり、未確認のURLを推測したりしません。外部AIがURLを取得できるとは限らないため、取得できない場合は本文を貼り付けてください。
 
 ChatGPTに資料のMarkdown化を頼むときは、用途が未確認なら短い選択肢を提案させ、利用者が選んだ用途を実際の `## 用途` 本文に含めます。必要に応じて `## 説明` と `## キーワード` も作ります。既存の `/knowledge/new` 登録フォームにリンクで下書きを渡せるのは、タイトルと本文を含むURL全体が8,000文字以下の場合です。それを超えるときはコピー貼り付けを使います。フォームを開いただけでは保存されません。
 
@@ -497,7 +497,7 @@ const updated = await fetch("https://studio.kanazawa-u.work/api/knowledge-source
 });
 ~~~
 
-同一ブラウザーの「自分が管理するソース」一覧はローカルに保存されます。別のブラウザーへ編集トークンや編集一覧は自動共有されません。公開一覧 `https://raw.githubusercontent.com/public-studio/md/main/knowledge/index.md` は参照用であり、編集トークンを返しません。
+同一ブラウザーの「自分が管理するソース」一覧はローカルに保存されます。別のブラウザーへ編集トークンや編集一覧は自動共有されません。公開一覧 `/knowledge/index.md` は参照用であり、編集トークンを返しません。
 
 ### AIでの参照について
 
